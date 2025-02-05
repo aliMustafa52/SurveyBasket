@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35514.174 d17.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SurveyBasketV5", "SurveyBasketV5\SurveyBasketV5.csproj", "{AABB3BD6-BD4B-4E1A-8893-7DCA4402066D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AABB3BD6-BD4B-4E1A-8893-7DCA4402066D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AABB3BD6-BD4B-4E1A-8893-7DCA4402066D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AABB3BD6-BD4B-4E1A-8893-7DCA4402066D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AABB3BD6-BD4B-4E1A-8893-7DCA4402066D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
