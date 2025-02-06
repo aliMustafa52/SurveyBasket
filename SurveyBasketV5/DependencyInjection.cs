@@ -1,9 +1,12 @@
 ﻿using FluentValidation;
 using MapsterMapper;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
-using SurveyBasketV5.Persistence;
+using SurveyBasketV5.Authentication;
+using SurveyBasketV5.Services.Authentication;
 using SurveyBasketV5.Services.Polls;
+using System.Text;
 
 namespace SurveyBasketV5
 {
@@ -19,9 +22,11 @@ namespace SurveyBasketV5
             services
                 .AddDbContextConfig(configuration)
                 .AddMapsterConfig()
-                .AddFluentValidationConfig();
+                .AddFluentValidationConfig()
+                .AddAuthConfig();
 
             services.AddScoped<IPollService, PollService>();
+            services.AddScoped<IAuthService, AuthService>();
 
             return services;
         }
@@ -53,6 +58,39 @@ namespace SurveyBasketV5
             services
                 .AddFluentValidationAutoValidation()
                 .AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+
+            return services;
+        }
+
+        private static IServiceCollection AddAuthConfig(this IServiceCollection services)
+        {
+            services
+                .AddIdentity<ApplicationUser,IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.AddSingleton<IJwtProvider, JwtProvider>();
+
+            services
+                .AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(options =>
+                {
+                    options.SaveToken = true;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("WhwoqPcLfEtcuyp3JSQ3Qd436AVxaOdD")),
+                        ValidIssuer = "SurveyBasket",
+                        ValidAudience = "SurveyBasket Users"
+                    };
+                });
+
 
             return services;
         }

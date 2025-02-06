@@ -12,6 +12,9 @@ namespace SurveyBasketV5
 
             builder.Services.AddDependencies(builder.Configuration);
 
+            //builder.Services
+            //    .AddIdentityApiEndpoints<ApplicationUser>()
+            //    .AddEntityFrameworkStores<ApplicationDbContext>();
 
             var app = builder.Build();
 
@@ -27,6 +30,7 @@ namespace SurveyBasketV5
 
             app.UseAuthorization();
 
+            //app.MapIdentityApi<ApplicationUser>();
 
             app.MapControllers();
 
