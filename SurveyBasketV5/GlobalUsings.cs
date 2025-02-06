@@ -1,0 +1,12 @@
+﻿global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+global using System.Reflection;
+global using Mapster;
+
+global using SurveyBasketV5.Contracts.Polls;
+global using SurveyBasketV5.Entities;
+global using SurveyBasket.Abstractions;
+global using SurveyBasketV5.Errors;
+global using SurveyBasketV5.Persistence;
