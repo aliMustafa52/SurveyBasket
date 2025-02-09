@@ -23,7 +23,7 @@ namespace SurveyBasketV5
                 .AddDbContextConfig(configuration)
                 .AddMapsterConfig()
                 .AddFluentValidationConfig()
-                .AddAuthConfig();
+                .AddAuthConfig(configuration);
 
             services.AddScoped<IPollService, PollService>();
             services.AddScoped<IAuthService, AuthService>();
@@ -62,7 +62,7 @@ namespace SurveyBasketV5
             return services;
         }
 
-        private static IServiceCollection AddAuthConfig(this IServiceCollection services)
+        private static IServiceCollection AddAuthConfig(this IServiceCollection services, IConfiguration configuration)
         {
             services
                 .AddIdentity<ApplicationUser,IdentityRole>()
@@ -70,6 +70,7 @@ namespace SurveyBasketV5
 
             services.AddSingleton<IJwtProvider, JwtProvider>();
 
+            var jwtSetting = configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>();
             services
                 .AddAuthentication(options =>
                 {
@@ -85,12 +86,18 @@ namespace SurveyBasketV5
                         ValidateIssuer = true,
                         ValidateAudience = true,
                         ValidateLifetime = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("WhwoqPcLfEtcuyp3JSQ3Qd436AVxaOdD")),
-                        ValidIssuer = "SurveyBasket",
-                        ValidAudience = "SurveyBasket Users"
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSetting?.Key!)),
+                        ValidIssuer = jwtSetting?.Issuer,
+                        ValidAudience = jwtSetting?.Audience
                     };
                 });
 
+            //services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
+
+            services.AddOptions<JwtOptions>()
+                .BindConfiguration(JwtOptions.SectionName)
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
 
             return services;
         }
