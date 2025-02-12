@@ -23,7 +23,8 @@ namespace SurveyBasketV5
                 .AddDbContextConfig(configuration)
                 .AddMapsterConfig()
                 .AddFluentValidationConfig()
-                .AddAuthConfig(configuration);
+                .AddAuthConfig(configuration)
+                .AddCorsConfig();
 
             services.AddScoped<IPollService, PollService>();
             services.AddScoped<IAuthService, AuthService>();
@@ -58,6 +59,19 @@ namespace SurveyBasketV5
             services
                 .AddFluentValidationAutoValidation()
                 .AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+
+            return services;
+        }
+
+        private static IServiceCollection AddCorsConfig(this IServiceCollection services)
+        {
+            services.AddCors(options =>
+                options.AddDefaultPolicy(builder => builder
+                            .AllowAnyMethod()
+                            .AllowAnyHeader()
+                            .AllowAnyOrigin()
+                )
+            );
 
             return services;
         }
