@@ -13,6 +13,7 @@ namespace SurveyBasketV5.Controllers
         [HttpPost("")]
         public async Task<IActionResult> Login(LoginRequest request, CancellationToken cancellationToken)
         {
+            throw new Exception("Ali Mustafa");
             var result = await _authService.GetTokenAsync(request.Email, request.Password, cancellationToken);
             return result.IsSuccess
                 ? Ok(result.Value) 

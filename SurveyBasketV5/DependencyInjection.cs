@@ -29,6 +29,9 @@ namespace SurveyBasketV5
             services.AddScoped<IPollService, PollService>();
             services.AddScoped<IAuthService, AuthService>();
 
+            services.AddExceptionHandler<GlobalExceptionHandler>();
+            services.AddProblemDetails();
+
             return services;
         }
 
