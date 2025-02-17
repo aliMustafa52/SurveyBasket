@@ -1,4 +1,4 @@
-﻿namespace SurveyBasket.Abstractions;
+﻿namespace SurveyBasketV5.Abstractions;
 
 public static class ResultExtensions
 {
@@ -14,8 +14,11 @@ public static class ResultExtensions
         {
             {
                 "errors", new[] { 
-                    result.Error.Code,
-                    result.Error.Description
+                    new
+                    {
+                        result.Error.Code,
+                        result.Error.Description
+                    }
                 }
             }
         };

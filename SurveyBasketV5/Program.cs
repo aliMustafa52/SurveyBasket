@@ -1,5 +1,4 @@
 using Scalar.AspNetCore;
-using SurveyBasketV5.Middleware;
 
 namespace SurveyBasketV5
 {
@@ -39,9 +38,6 @@ namespace SurveyBasketV5
 
             //use Exception Handling Middleware after .net 8
             app.UseExceptionHandler();
-
-            //use Exception Handling Middleware before .net 8
-            //app.UseMiddleware<ExceptionHandlingMiddleware>();
 
             app.Run();
         }

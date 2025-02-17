@@ -10,6 +10,8 @@
         public DateOnly EndsAt { get; set; }
 
         public bool IsActive { get; set; } = true;
-        
+
+        public ICollection<Question> Questions { get; set; } = [];
+
     }
 }
