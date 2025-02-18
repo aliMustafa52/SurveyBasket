@@ -7,6 +7,7 @@ using SurveyBasketV5.Authentication;
 using SurveyBasketV5.Services.Authentication;
 using SurveyBasketV5.Services.Polls;
 using SurveyBasketV5.Services.Questions;
+using SurveyBasketV5.Services.Votes;
 using System.Text;
 
 namespace SurveyBasketV5
@@ -30,6 +31,7 @@ namespace SurveyBasketV5
             services.AddScoped<IPollService, PollService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IQuestionService, QuestionService>();
+            services.AddScoped<IVoteService, VoteService>();
 
             services.AddExceptionHandler<GlobalExceptionHandler>();
             services.AddProblemDetails();

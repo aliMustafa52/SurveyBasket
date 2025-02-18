@@ -15,6 +15,21 @@
             return pollResponses;
         }
 
+        public async Task<IEnumerable<PollResponse>> GetCurrentAsync(CancellationToken cancellationToken = default)
+        {
+            var pollResponses = await _dbContext.Polls
+                    .Where(x => x.IsActive 
+                            && x.IsPublished
+                            && DateOnly.FromDateTime(DateTime.UtcNow) >= x.StartsAt 
+                            && DateOnly.FromDateTime(DateTime.UtcNow) <= x.EndsAt
+                    )
+                    .AsNoTracking()
+                    .ProjectToType<PollResponse>()
+                    .ToListAsync(cancellationToken);
+
+            return pollResponses;
+        }
+
         public async Task<Result<PollResponse>> GetAsync(int id, CancellationToken cancellationToken = default)
         {
             var poll = await _dbContext.Polls

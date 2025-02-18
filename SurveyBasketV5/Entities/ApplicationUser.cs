@@ -8,5 +8,6 @@ namespace SurveyBasketV5.Entities
         public string LastName { get; set; } = string.Empty;
 
         public List<RefreshToken> RefreshTokens { get; set; } = [];
+        public ICollection<Vote> Votes { get; set; } = [];
     }
 }

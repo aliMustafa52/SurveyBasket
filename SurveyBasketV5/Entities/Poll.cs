@@ -12,6 +12,7 @@
         public bool IsActive { get; set; } = true;
 
         public ICollection<Question> Questions { get; set; } = [];
+        public ICollection<Vote> Votes { get; set; } = [];
 
     }
 }

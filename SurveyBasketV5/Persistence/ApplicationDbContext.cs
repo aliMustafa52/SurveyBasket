@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using System.Security.Claims;
 
 namespace SurveyBasketV5.Persistence
 {
@@ -13,6 +12,8 @@ namespace SurveyBasketV5.Persistence
         public DbSet<Poll> Polls { get; set; } = null!;
         public DbSet<Question> Questions { get; set; } = null!;
         public DbSet<Answer> Answers { get; set; } = null!;
+        public DbSet<Vote> Votes { get; set; } = null!;
+        public DbSet<VoteAnswer> VoteAnswers { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -32,7 +33,7 @@ namespace SurveyBasketV5.Persistence
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            var currentUserId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var currentUserId = _httpContextAccessor.HttpContext?.User.GetUserId()!;
             var entries = ChangeTracker.Entries<AuditableEntity>();
             foreach (var entityEntry in entries)
             {
