@@ -1,4 +1,5 @@
 using Scalar.AspNetCore;
+using Serilog;
 
 namespace SurveyBasketV5
 {
@@ -11,6 +12,11 @@ namespace SurveyBasketV5
             // Add services to the container.
 
             builder.Services.AddDependencies(builder.Configuration);
+
+            // add Serilog but add configration in app setting
+            builder.Host.UseSerilog((context, configration) =>
+                configration.ReadFrom.Configuration(context.Configuration)
+            );
 
             //builder.Services
             //    .AddIdentityApiEndpoints<ApplicationUser>()
@@ -25,6 +31,9 @@ namespace SurveyBasketV5
                 //app.UseSwaggerUI(options => options.SwaggerEndpoint("/openapi/v1.json", "v1"));
                 app.MapScalarApiReference();
             }
+
+            //add http methods (requests)
+            app.UseSerilogRequestLogging();
 
             app.UseHttpsRedirection();
 
