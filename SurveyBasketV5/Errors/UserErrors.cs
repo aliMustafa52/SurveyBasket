@@ -6,12 +6,15 @@
             new("User.NotFound", "No User was found with the given ID", StatusCodes.Status404NotFound);
 
         public static readonly Error UserInvalidCredentials =
-            new("User.InvalidCredentials", "Email or password is not correct", StatusCodes.Status409Conflict);
+            new("User.InvalidCredentials", "Email or password is not correct", StatusCodes.Status401Unauthorized);
 
         public static readonly Error UserInvalidAccessToken =
-            new("User.InvalidAccessToken", "Jwt Access Token is not valid", StatusCodes.Status400BadRequest);
+            new("User.InvalidAccessToken", "Jwt Access Token is not valid", StatusCodes.Status401Unauthorized);
 
         public static readonly Error UserInvalidResreshToken =
-            new("User.InvalidResreshToken", "Resresh Token is not valid", StatusCodes.Status400BadRequest);
+            new("User.InvalidResreshToken", "Resresh Token is not valid", StatusCodes.Status401Unauthorized);
+
+        public static readonly Error UserDublicatedEmail =
+            new("User.DublicatedEmail", "This email is already exists", StatusCodes.Status409Conflict);
     }
 }

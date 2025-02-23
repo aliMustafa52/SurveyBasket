@@ -76,6 +76,47 @@ namespace SurveyBasketV5.Services.Authentication
             return Result.Success(new AuthResponse(user.Id, user.Email, user.FirstName, user.LastName, newToken, expiresIn * 60, newRefreshTokne, refreshTokenExpiration));
         }
 
+        public async Task<Result<AuthResponse>> RegisterAsync(RegisterRequest registerRequest, CancellationToken cancellationToken = default)
+        {
+            //check if email exists 
+            var isEmailExists = await _userManager.Users.AnyAsync(u => u.Email == registerRequest.Email, cancellationToken);
+            if(isEmailExists)
+                return Result.Failure<AuthResponse>(UserErrors.UserDublicatedEmail);
+
+            var user = registerRequest.Adapt<ApplicationUser>();
+
+            var result =await _userManager.CreateAsync(user, registerRequest.Password);
+            if(!result.Succeeded)
+            {
+                var error = result.Errors.First();
+                return Result.Failure<AuthResponse>(
+                    new Error(error.Code,
+                        error.Description
+                        ,StatusCodes.Status400BadRequest
+                    )
+                );
+            }
+
+
+            // generate Token
+            var (token, expiresIn) = _jwtProvider.GenerateToken(user);
+
+            // Generate Refresh Token
+            var refreshTokne = GenerateRefreshToken();
+
+            var refreshTokenExpiration = DateTime.UtcNow.AddDays(_refreshTokenExpiryDays);
+
+            user.RefreshTokens.Add(new RefreshToken
+            {
+                Token = refreshTokne,
+                ExpiresOn = refreshTokenExpiration
+            });
+
+            await _userManager.UpdateAsync(user);
+
+            return Result.Success(new AuthResponse(user.Id, user.Email, user.FirstName, user.LastName, token, expiresIn * 60, refreshTokne, refreshTokenExpiration));
+
+        }
         private static string GenerateRefreshToken()
         {
             var number = RandomNumberGenerator.GetBytes(64);

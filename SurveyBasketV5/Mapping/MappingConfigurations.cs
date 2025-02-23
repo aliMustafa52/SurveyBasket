@@ -13,6 +13,8 @@ namespace SurveyBasketV5.Mapping
                 .Map(dest => dest.Answers, 
                         src => src.Answers.Select(answer => new Answer { Content = answer }));
 
+            config.NewConfig<RegisterRequest, ApplicationUser>()
+                .Map(dest => dest.UserName, src => src.Email);
 
         }
     }
