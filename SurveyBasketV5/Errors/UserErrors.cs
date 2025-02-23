@@ -16,5 +16,14 @@
 
         public static readonly Error UserDublicatedEmail =
             new("User.DublicatedEmail", "This email is already exists", StatusCodes.Status409Conflict);
+
+        public static readonly Error UserNotConfirmedEmail =
+            new("User.UserNotConfirmedEmail", "Email is not confirmed", StatusCodes.Status401Unauthorized);
+
+        public static readonly Error InvalidCode =
+            new("User.InvalidCode", "Code is invalid", StatusCodes.Status401Unauthorized);
+
+        public static readonly Error DublicatedConfirmationCode =
+            new("User.DublicatedConfirmationCode", "Email is already confirmed", StatusCodes.Status400BadRequest);
     }
 }

@@ -1,14 +1,17 @@
 ﻿using FluentValidation;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.IdentityModel.Tokens;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 using SurveyBasketV5.Authentication;
 using SurveyBasketV5.Services.Authentication;
+using SurveyBasketV5.Services.Emails;
 using SurveyBasketV5.Services.Polls;
 using SurveyBasketV5.Services.Questions;
 using SurveyBasketV5.Services.Results;
 using SurveyBasketV5.Services.Votes;
+using SurveyBasketV5.Settings;
 using System.Text;
 
 namespace SurveyBasketV5
@@ -34,9 +37,14 @@ namespace SurveyBasketV5
             services.AddScoped<IQuestionService, QuestionService>();
             services.AddScoped<IVoteService, VoteService>();
             services.AddScoped<IResultService, ResultService>();
+            services.AddScoped<IEmailSender, EmailService>();
 
             services.AddExceptionHandler<GlobalExceptionHandler>();
             services.AddProblemDetails();
+
+            services.AddHttpContextAccessor();
+
+            services.Configure<EmailSettings>(configuration.GetSection(nameof(EmailSettings)));
 
             return services;
         }
@@ -89,7 +97,8 @@ namespace SurveyBasketV5
         {
             services
                 .AddIdentity<ApplicationUser,IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
 
             services.AddSingleton<IJwtProvider, JwtProvider>();
 
@@ -126,7 +135,7 @@ namespace SurveyBasketV5
             {
                 options.Password.RequiredLength = 8;
                 options.User.RequireUniqueEmail = true;
-                //options.SignIn.RequireConfirmedEmail = true;
+                options.SignIn.RequireConfirmedEmail = true;
             });
 
             return services;

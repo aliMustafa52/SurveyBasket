@@ -23,7 +23,25 @@ namespace SurveyBasketV5.Controllers
         {
             var result = await _authService.RegisterAsync(request, cancellationToken);
             return result.IsSuccess
-                ? Ok(result.Value)
+                ? Ok()
+                : result.ToProblem();
+        }
+
+        [HttpPost("confirm-email")]
+        public async Task<IActionResult> ConfirmEmail(ConfirmEmailRequest request)
+        {
+            var result = await _authService.ConfirmEmailAsync(request);
+            return result.IsSuccess
+                ? Ok()
+                : result.ToProblem();
+        }
+
+        [HttpPost("resend-confirmation-email")]
+        public async Task<IActionResult> ResendConfirmationEmail(ResendConfirmationEmailRequest request)
+        {
+            var result = await _authService.ResendConfirmationEmailAsync(request);
+            return result.IsSuccess
+                ? Ok()
                 : result.ToProblem();
         }
 
