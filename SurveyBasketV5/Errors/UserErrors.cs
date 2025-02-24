@@ -25,5 +25,8 @@
 
         public static readonly Error DublicatedConfirmationCode =
             new("User.DublicatedConfirmationCode", "Email is already confirmed", StatusCodes.Status400BadRequest);
+
+        public static readonly Error UserInCorrectPassword =
+            new("User.InCorrectPassword", "Current password is not correct", StatusCodes.Status400BadRequest);
     }
 }

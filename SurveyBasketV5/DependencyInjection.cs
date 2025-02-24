@@ -10,6 +10,7 @@ using SurveyBasketV5.Services.Emails;
 using SurveyBasketV5.Services.Polls;
 using SurveyBasketV5.Services.Questions;
 using SurveyBasketV5.Services.Results;
+using SurveyBasketV5.Services.Users;
 using SurveyBasketV5.Services.Votes;
 using SurveyBasketV5.Settings;
 using System.Text;
@@ -38,6 +39,7 @@ namespace SurveyBasketV5
             services.AddScoped<IVoteService, VoteService>();
             services.AddScoped<IResultService, ResultService>();
             services.AddScoped<IEmailSender, EmailService>();
+            services.AddScoped<IUserService, UserService>();
 
             services.AddExceptionHandler<GlobalExceptionHandler>();
             services.AddProblemDetails();

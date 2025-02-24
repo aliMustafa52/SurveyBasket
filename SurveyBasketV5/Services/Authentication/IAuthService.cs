@@ -8,5 +8,8 @@
         Task<Result> ResendConfirmationEmailAsync(ResendConfirmationEmailRequest request);
         Task<Result<AuthResponse>> GetRefreshAsync(string token, string refreshToken, CancellationToken cancellationToken = default);
         Task<Result> RevokeRefreshAsync(string token, string refreshToken, CancellationToken cancellationToken = default);
+        Task<Result> SendResetPasswordCodeAsync(ResendConfirmationEmailRequest request);
+
+        Task<Result> ResetPasswordCodeAsync(ResetPasswordRequest request);
     }
 }

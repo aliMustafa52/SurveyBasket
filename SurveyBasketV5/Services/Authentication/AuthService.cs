@@ -121,7 +121,25 @@ namespace SurveyBasketV5.Services.Authentication
             return Result.Success();
 
         }
+        public async Task<Result> RevokeRefreshAsync(string token, string refreshToken, CancellationToken cancellationToken = default)
+        {
+            var userId = _jwtProvider.ValidateToken(token);
+            if (userId is null)
+                return Result.Failure(UserErrors.UserInvalidAccessToken);
 
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user is null)
+                return Result.Failure(UserErrors.UserNotFound);
+
+            var userRefreshToken = user.RefreshTokens.SingleOrDefault(x => x.Token == refreshToken && x.IsActive);
+            if (userRefreshToken is null)
+                return Result.Failure(UserErrors.UserInvalidResreshToken);
+
+            userRefreshToken.RevokedOn = DateTime.UtcNow;
+            await _userManager.UpdateAsync(user);
+
+            return Result.Success();
+        }
         public async Task<Result> ConfirmEmailAsync(ConfirmEmailRequest request)
         {
             if(await _userManager.FindByIdAsync(request.UserId) is not { } user)
@@ -174,6 +192,60 @@ namespace SurveyBasketV5.Services.Authentication
 
         }
 
+        public async Task<Result> SendResetPasswordCodeAsync(ResendConfirmationEmailRequest request)
+        {
+            var user = await _userManager.FindByEmailAsync(request.Email);
+            if (user is null)
+                return Result.Success();
+
+            if(!user.EmailConfirmed)
+                return Result.Failure(UserErrors.UserNotConfirmedEmail);
+
+            //generate Password Reset Token
+            var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+
+            //send email
+            await SendResetPasswordEmailAsync(user, code);
+
+            return Result.Success();
+
+        }
+
+        public async Task<Result> ResetPasswordCodeAsync(ResetPasswordRequest request)
+        {
+            var user = await _userManager.FindByEmailAsync(request.Email);
+            if ( user is null || !user.EmailConfirmed)
+                return Result.Failure(UserErrors.InvalidCode);
+
+            //TODO
+            // check if new password is the same as current password
+
+            IdentityResult result;
+            try
+            {
+                var code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(request.Code));
+                result = await _userManager.ResetPasswordAsync(user, code, request.NewPassword);
+            }
+            catch (FormatException)
+            {
+                result = IdentityResult.Failed(_userManager.ErrorDescriber.InvalidToken());
+            }
+            
+            if (!result.Succeeded)
+            {
+                var error = result.Errors.First();
+                return Result.Failure(
+                    new Error(error.Code,
+                        error.Description
+                        , StatusCodes.Status401Unauthorized
+                    )
+                );
+            }
+
+            return Result.Success();
+        }
+
         private static string GenerateRefreshToken()
         {
             var number = RandomNumberGenerator.GetBytes(64);
@@ -194,25 +266,20 @@ namespace SurveyBasketV5.Services.Authentication
             var emailBody = EmailBodyBuilder.GenerateEmailBody("EmailConfirmation", placeHolder);
             await _emailSender.SendEmailAsync(user.Email!, "Survey Basket: Email Confirmation", emailBody);
         }
-
-        public async Task<Result> RevokeRefreshAsync(string token, string refreshToken, CancellationToken cancellationToken = default)
+        private async Task SendResetPasswordEmailAsync(ApplicationUser user, string code)
         {
-            var userId = _jwtProvider.ValidateToken(token);
-            if (userId is null)
-                return Result.Failure(UserErrors.UserInvalidAccessToken);
+            var origin = _httpContextAccessor.HttpContext?.Request.Headers.Origin;
 
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user is null)
-                return Result.Failure(UserErrors.UserNotFound);
+            var placeHolder = new Dictionary<string, string>
+            {
+                { "{{name}}", $"{user.FirstName} {user.LastName}" },
+                { "{{action_url}}", $"{origin}/auth/forget-password?email={user.Email}&Code={code}" }
+            };
 
-            var userRefreshToken = user.RefreshTokens.SingleOrDefault(x => x.Token == refreshToken && x.IsActive);
-            if (userRefreshToken is null)
-                return Result.Failure(UserErrors.UserInvalidResreshToken);
-
-            userRefreshToken.RevokedOn = DateTime.UtcNow;
-            await _userManager.UpdateAsync(user);
-
-            return Result.Success();
+            var emailBody = EmailBodyBuilder.GenerateEmailBody("ForgetPassword", placeHolder);
+            await _emailSender.SendEmailAsync(user.Email!, "Survey Basket: Email Confirmation", emailBody);
         }
+
+        
     }
 }
