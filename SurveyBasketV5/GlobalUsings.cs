@@ -17,3 +17,4 @@ global using SurveyBasketV5.Contracts.Questions;
 global using SurveyBasketV5.Services.Questions;
 global using SurveyBasketV5.Extensions;
 global using SurveyBasketV5.Services.Results;
+global using SurveyBasketV5.Abstractions.Consts;

@@ -98,7 +98,7 @@ namespace SurveyBasketV5
         private static IServiceCollection AddAuthConfig(this IServiceCollection services, IConfiguration configuration)
         {
             services
-                .AddIdentity<ApplicationUser,IdentityRole>()
+                .AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 

@@ -111,6 +111,8 @@ namespace SurveyBasketV5.Services.Authentication
                 );
             }
 
+            
+
             //generate verfication code
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
@@ -170,6 +172,7 @@ namespace SurveyBasketV5.Services.Authentication
                 );
             }
 
+            await _userManager.AddToRoleAsync(user, DefaultRoles.MemberRoleName);
             return Result.Success();
 
         }
