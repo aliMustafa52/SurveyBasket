@@ -102,6 +102,10 @@ namespace SurveyBasketV5
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
+            //custom permission-based authorization
+            services.AddTransient<IAuthorizationHandler, PermissionAuthorizationHandler>();
+            services.AddTransient<IAuthorizationPolicyProvider, PermissionAuthorizationPolicyProvider>();
+
             services.AddSingleton<IJwtProvider, JwtProvider>();
 
             var jwtSetting = configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>();
