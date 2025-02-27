@@ -1,48 +1,77 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using SurveyBasketV5.Contracts.Users;
+﻿using SurveyBasketV5.Contracts.Users;
 using SurveyBasketV5.Services.Users;
+using System.Threading;
 
 namespace SurveyBasketV5.Controllers
 {
-    [Route("me")]
+    [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class UsersController(IUserService userService) : ControllerBase
     {
         private readonly IUserService _userService = userService;
 
         [HttpGet("")]
-        public async Task<IActionResult> Info()
+        [HasPermission(Permissions.GetUsers)]
+        public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
-            var userId = User.GetUserId();
-            var result = await _userService.GetUserProfileAsync(userId!);
+            var responses = await _userService.GetAllAsync(cancellationToken);
 
-            return result.IsSuccess 
-                    ? Ok(result.Value) 
-                    : result.ToProblem();
+            return Ok(responses);
         }
 
-        [HttpPut("")]
-        public async Task<IActionResult> Update([FromBody] UpdateProfileRequest request)
+        [HttpGet("{Id}")]
+        [HasPermission(Permissions.GetUsers)]
+        public async Task<IActionResult> Get([FromRoute] string id)
         {
-            var userId = User.GetUserId();
-            var result = await _userService.UpdateUserProfileAsync(userId!,request);
+            var result = await _userService.GetAsync(id);
 
             return result.IsSuccess
-                    ? NoContent()
-                    : result.ToProblem();
+                ? Ok(result.Value)
+                : result.ToProblem();
         }
 
-        [HttpPut("change-password")]
-        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+        [HttpPost("")]
+        [HasPermission(Permissions.AddUsers)]
+        public async Task<IActionResult> Add([FromBody] CreateUserRequest request,CancellationToken cancellationToken)
         {
-            var userId = User.GetUserId();
-            var result = await _userService.ChangePasswordAsync(userId!, request);
+            var result = await _userService.AddAsync(request,cancellationToken);
 
             return result.IsSuccess
-                    ? NoContent()
-                    : result.ToProblem();
+                ? CreatedAtAction(nameof(Get), new { id = result.Value.Id }, result.Value)
+                : result.ToProblem();
+        }
+
+        [HttpPut("{Id}")]
+        [HasPermission(Permissions.UpdateUsers)]
+        public async Task<IActionResult> Update([FromRoute] string id, [FromBody] UpdateUserRequest request, CancellationToken cancellationToken)
+        {
+            var result = await _userService.UpdateAsync(id,request, cancellationToken);
+
+            return result.IsSuccess
+                ? NoContent()
+                : result.ToProblem();
+        }
+
+        [HttpPut("{Id}/toggle-status")]
+        [HasPermission(Permissions.UpdateUsers)]
+        public async Task<IActionResult> ToggleStatus([FromRoute] string id)
+        {
+            var result = await _userService.ToggleStatusAsync(id);
+
+            return result.IsSuccess
+                ? NoContent()
+                : result.ToProblem();
+        }
+
+        [HttpPut("{Id}/unlock")]
+        [HasPermission(Permissions.UpdateUsers)]
+        public async Task<IActionResult> Unlock([FromRoute] string id)
+        {
+            var result = await _userService.UnlockAsync(id);
+
+            return result.IsSuccess
+                ? NoContent()
+                : result.ToProblem();
         }
     }
 }

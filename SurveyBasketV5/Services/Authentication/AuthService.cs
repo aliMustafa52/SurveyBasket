@@ -1,12 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.WebUtilities;
 using SurveyBasketV5.Authentication;
-using SurveyBasketV5.Entities;
 using SurveyBasketV5.Helpers;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading;
-using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 
 namespace SurveyBasketV5.Services.Authentication
 {
@@ -30,12 +27,19 @@ namespace SurveyBasketV5.Services.Authentication
             if (await _userManager.FindByEmailAsync(email) is not { } user)
                 return Result.Failure<AuthResponse>(UserErrors.UserInvalidCredentials);
 
-            var result = await _signInManager.PasswordSignInAsync(user, password, false, false);
+            if(user.IsDisabled)
+                return Result.Failure<AuthResponse>(UserErrors.DisabledUser);
+
+            var result = await _signInManager.PasswordSignInAsync(user, password,false, true);
             if (!result.Succeeded)
             {
-                return Result.Failure<AuthResponse>(result.IsNotAllowed 
-                    ? UserErrors.UserNotConfirmedEmail 
-                    : UserErrors.UserInvalidCredentials);
+                var error = result.IsNotAllowed
+                    ? UserErrors.UserNotConfirmedEmail
+                    : result.IsLockedOut
+                    ? UserErrors.LockedOutUser
+                    : UserErrors.UserInvalidCredentials;
+
+                return Result.Failure<AuthResponse>(error);
             }
 
             // get roles and permissions
@@ -71,6 +75,12 @@ namespace SurveyBasketV5.Services.Authentication
             var user = await _userManager.FindByIdAsync(userId);
             if(user is null)
                 return Result.Failure<AuthResponse>(UserErrors.UserNotFound);
+
+            if (user.IsDisabled)
+                return Result.Failure<AuthResponse>(UserErrors.DisabledUser);
+
+            if (user.LockoutEnd > DateTime.UtcNow)
+                return Result.Failure<AuthResponse>(UserErrors.LockedOutUser);
 
             var userRefreshToken = user.RefreshTokens.SingleOrDefault(x => x.Token == refreshToken && x.IsActive);
             if(userRefreshToken is null)
@@ -289,7 +299,7 @@ namespace SurveyBasketV5.Services.Authentication
             };
 
             var emailBody = EmailBodyBuilder.GenerateEmailBody("ForgetPassword", placeHolder);
-            await _emailSender.SendEmailAsync(user.Email!, "Survey Basket: Email Confirmation", emailBody);
+            await _emailSender.SendEmailAsync(user.Email!, "Survey Basket: Reset Password", emailBody);
         }
 
         private async Task<(IEnumerable<string> roles, IEnumerable<string> permissions)> GetRolesAndPermissionsAsync(ApplicationUser user, CancellationToken cancellationToken)

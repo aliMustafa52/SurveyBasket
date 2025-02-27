@@ -1,4 +1,6 @@
-﻿namespace SurveyBasketV5.Errors
+﻿using SurveyBasketV5.Abstractions;
+
+namespace SurveyBasketV5.Errors
 {
     public static class UserErrors
     {
@@ -7,6 +9,12 @@
 
         public static readonly Error UserInvalidCredentials =
             new("User.InvalidCredentials", "Email or password is not correct", StatusCodes.Status401Unauthorized);
+
+        public static readonly Error DisabledUser =
+            new("User.DisabledUser", "DisabledUser, Pleases contact your admin", StatusCodes.Status401Unauthorized);
+
+        public static readonly Error LockedOutUser =
+            new ("User.LockedOutUser", "LockedOutUser, Pleases try again after 5 mins", StatusCodes.Status401Unauthorized);
 
         public static readonly Error UserInvalidAccessToken =
             new("User.InvalidAccessToken", "Jwt Access Token is not valid", StatusCodes.Status401Unauthorized);
@@ -28,5 +36,8 @@
 
         public static readonly Error UserInCorrectPassword =
             new("User.InCorrectPassword", "Current password is not correct", StatusCodes.Status400BadRequest);
+
+        public static readonly Error InvalidRoles =
+            new("User.InvalidRoles", "InvalidRoles", StatusCodes.Status400BadRequest);
     }
 }

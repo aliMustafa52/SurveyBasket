@@ -81,5 +81,15 @@ namespace SurveyBasketV5.Controllers
                     ? NoContent()
                     : result.ToProblem();
         }
+
+        [HttpPost("test")]
+        public IActionResult Test()
+        {
+            var passwordHasher = new PasswordHasher<ApplicationUser>();
+            var user = new ApplicationUser();
+            var pass = passwordHasher.HashPassword(user, "Y8Pmja-6)");
+
+            return Ok(pass);
+        }
     }
 }
