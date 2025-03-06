@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.UI.Services;
+﻿using Hangfire;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.WebUtilities;
 using SurveyBasketV5.Authentication;
 using SurveyBasketV5.Helpers;
@@ -137,6 +138,8 @@ namespace SurveyBasketV5.Services.Authentication
             code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
 
             //send email
+            // make this background job using hangfire
+ 
             await SendConfirmationCodeAsync(user, code);
 
             return Result.Success();
@@ -286,7 +289,9 @@ namespace SurveyBasketV5.Services.Authentication
             };
 
             var emailBody = EmailBodyBuilder.GenerateEmailBody("EmailConfirmation", placeHolder);
-            await _emailSender.SendEmailAsync(user.Email!, "Survey Basket: Email Confirmation", emailBody);
+
+            BackgroundJob.Enqueue(() => _emailSender.SendEmailAsync(user.Email!, "Survey Basket: Email Confirmation", emailBody));
+            await Task.CompletedTask;
         }
         private async Task SendResetPasswordEmailAsync(ApplicationUser user, string code)
         {

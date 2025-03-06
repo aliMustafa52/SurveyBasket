@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Hangfire;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -7,6 +8,7 @@ using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 using SurveyBasketV5.Authentication;
 using SurveyBasketV5.Services.Authentication;
 using SurveyBasketV5.Services.Emails;
+using SurveyBasketV5.Services.Notifications;
 using SurveyBasketV5.Services.Polls;
 using SurveyBasketV5.Services.Questions;
 using SurveyBasketV5.Services.Results;
@@ -32,7 +34,8 @@ namespace SurveyBasketV5
                 .AddMapsterConfig()
                 .AddFluentValidationConfig()
                 .AddAuthConfig(configuration)
-                .AddCorsConfig();
+                .AddCorsConfig()
+                .AddHangfireConfig(configuration);
 
             services.AddScoped<IPollService, PollService>();
             services.AddScoped<IAuthService, AuthService>();
@@ -42,6 +45,7 @@ namespace SurveyBasketV5
             services.AddScoped<IEmailSender, EmailService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<INotificationService, NotificationService>();
 
             services.AddExceptionHandler<GlobalExceptionHandler>();
             services.AddProblemDetails();
@@ -145,6 +149,21 @@ namespace SurveyBasketV5
                 options.User.RequireUniqueEmail = true;
                 options.SignIn.RequireConfirmedEmail = true;
             });
+
+            return services;
+        }
+
+        private static IServiceCollection AddHangfireConfig(this IServiceCollection services, IConfiguration configuration)
+        {
+            // Add Hangfire services.
+            services.AddHangfire(hangfireConfiguration => hangfireConfiguration
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UseSqlServerStorage(configuration.GetConnectionString("HangfireConnection")));
+
+            // Add the processing server as IHostedService
+            services.AddHangfireServer();
 
             return services;
         }
