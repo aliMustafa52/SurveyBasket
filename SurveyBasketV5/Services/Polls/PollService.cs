@@ -18,9 +18,9 @@
         public async Task<IEnumerable<PollResponse>> GetCurrentAsync(CancellationToken cancellationToken = default)
         {
             var pollResponses = await _dbContext.Polls
-                    .Where(x => x.IsActive 
+                    .Where(x => x.IsActive
                             && x.IsPublished
-                            && DateOnly.FromDateTime(DateTime.UtcNow) >= x.StartsAt 
+                            && DateOnly.FromDateTime(DateTime.UtcNow) >= x.StartsAt
                             && DateOnly.FromDateTime(DateTime.UtcNow) <= x.EndsAt
                     )
                     .AsNoTracking()
@@ -45,7 +45,7 @@
         {
             var isExistingTitle = await _dbContext.Polls
                 .AnyAsync(x => x.Title == request.Title && x.IsActive, cancellationToken);
-            if(isExistingTitle)
+            if (isExistingTitle)
                 return Result.Failure<PollResponse>(PollErrors.DuplicatedPollTitle);
 
             var poll = request.Adapt<Poll>();
@@ -62,7 +62,7 @@
                 .Where(x => x.IsActive && (x.Id == id || x.Title == request.Title))
                 .ToListAsync(cancellationToken);
 
-            var existingPoll = polls.SingleOrDefault(x => x.Id ==id);
+            var existingPoll = polls.SingleOrDefault(x => x.Id == id);
             if (existingPoll is null)
                 return Result.Failure<PollResponse>(PollErrors.PollNotFound);
 
@@ -71,10 +71,12 @@
             if (isExistingTitle)
                 return Result.Failure(PollErrors.DuplicatedPollTitle);
 
-            existingPoll.Title = request.Title;
-            existingPoll.Summary = request.Summary;
-            existingPoll.StartsAt = request.StartsAt;
-            existingPoll.EndsAt = request.EndsAt;
+            //existingPoll.Title = request.Title;
+            //existingPoll.Summary = request.Summary;
+            //existingPoll.StartsAt = request.StartsAt;
+            //existingPoll.EndsAt = request.EndsAt;
+
+            existingPoll = request.Adapt(existingPoll);
 
             await _dbContext.SaveChangesAsync(cancellationToken);
 

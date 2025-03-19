@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using SurveyBasketV5.Contracts.Users;
+﻿using SurveyBasketV5.Contracts.Users;
 using SurveyBasketV5.Services.Users;
 
 namespace SurveyBasketV5.Controllers
@@ -18,8 +16,8 @@ namespace SurveyBasketV5.Controllers
             var userId = User.GetUserId();
             var result = await _userService.GetUserProfileAsync(userId!);
 
-            return result.IsSuccess 
-                    ? Ok(result.Value) 
+            return result.IsSuccess
+                    ? Ok(result.Value)
                     : result.ToProblem();
         }
 
@@ -27,7 +25,7 @@ namespace SurveyBasketV5.Controllers
         public async Task<IActionResult> Update([FromBody] UpdateProfileRequest request)
         {
             var userId = User.GetUserId();
-            var result = await _userService.UpdateUserProfileAsync(userId!,request);
+            var result = await _userService.UpdateUserProfileAsync(userId!, request);
 
             return result.IsSuccess
                     ? NoContent()

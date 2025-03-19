@@ -7,18 +7,18 @@
             //Default Data
             var adminRole = new ApplicationRole
             {
-                Id = DefaultRoles.AdminRoleId,
-                Name = DefaultRoles.AdminRoleName,
-                NormalizedName = DefaultRoles.AdminRoleName.ToUpper(),
-                ConcurrencyStamp = DefaultRoles.AdminRoleConcurrencyStamp,
+                Id = DefaultRoles.Admin.Id,
+                Name = DefaultRoles.Admin.Name,
+                NormalizedName = DefaultRoles.Admin.Name.ToUpper(),
+                ConcurrencyStamp = DefaultRoles.Admin.ConcurrencyStamp,
             };
 
             var MemberRole = new ApplicationRole
             {
-                Id = DefaultRoles.MemberRoleId,
-                Name = DefaultRoles.MemberRoleName,
-                NormalizedName = DefaultRoles.MemberRoleName.ToUpper(),
-                ConcurrencyStamp = DefaultRoles.MemberRoleConcurrencyStamp,
+                Id = DefaultRoles.Member.Id,
+                Name = DefaultRoles.Member.Name,
+                NormalizedName = DefaultRoles.Member.Name.ToUpper(),
+                ConcurrencyStamp = DefaultRoles.Member.ConcurrencyStamp,
                 IsDefault = true,
             };
 

@@ -9,5 +9,5 @@
         bool IsDisabled,
         IEnumerable<string> Roles
     );
-    
+
 }

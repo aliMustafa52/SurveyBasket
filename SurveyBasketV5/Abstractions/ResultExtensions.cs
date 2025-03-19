@@ -13,7 +13,7 @@ public static class ResultExtensions
         problemDetails!.Extensions = new Dictionary<string, object?>
         {
             {
-                "errors", new[] { 
+                "errors", new[] {
                     new
                     {
                         result.Error.Code,

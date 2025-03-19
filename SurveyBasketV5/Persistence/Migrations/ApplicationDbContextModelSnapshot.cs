@@ -17,7 +17,7 @@ namespace SurveyBasketV5.Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.1")
+                .HasAnnotation("ProductVersion", "9.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -283,7 +283,7 @@ namespace SurveyBasketV5.Persistence.Migrations
                         .IsUnique()
                         .HasFilter("IsActive = 1");
 
-                    b.ToTable("Answers");
+                    b.ToTable("Answers", (string)null);
                 });
 
             modelBuilder.Entity("SurveyBasketV5.Entities.ApplicationRole", b =>
@@ -491,7 +491,7 @@ namespace SurveyBasketV5.Persistence.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("Polls");
+                    b.ToTable("Polls", (string)null);
                 });
 
             modelBuilder.Entity("SurveyBasketV5.Entities.Question", b =>
@@ -538,7 +538,7 @@ namespace SurveyBasketV5.Persistence.Migrations
                         .IsUnique()
                         .HasFilter("IsActive = 1");
 
-                    b.ToTable("Questions");
+                    b.ToTable("Questions", (string)null);
                 });
 
             modelBuilder.Entity("SurveyBasketV5.Entities.Vote", b =>
@@ -566,7 +566,7 @@ namespace SurveyBasketV5.Persistence.Migrations
                     b.HasIndex("PollId", "UserId")
                         .IsUnique();
 
-                    b.ToTable("Votes");
+                    b.ToTable("Votes", (string)null);
                 });
 
             modelBuilder.Entity("SurveyBasketV5.Entities.VoteAnswer", b =>
@@ -595,7 +595,7 @@ namespace SurveyBasketV5.Persistence.Migrations
                     b.HasIndex("VoteId", "QuestionId")
                         .IsUnique();
 
-                    b.ToTable("VoteAnswers");
+                    b.ToTable("VoteAnswers", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

@@ -27,12 +27,12 @@ namespace SurveyBasketV5.Authentication
             var expiresIn = _jwtOptions.ExpiryMinutes;
 
             var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Key));
-            var signingCredentials = new SigningCredentials(symmetricSecurityKey,SecurityAlgorithms.HmacSha256);
+            var signingCredentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
                 issuer: _jwtOptions.Issuer,
                 audience: _jwtOptions.Audience,
-                claims:claims,
+                claims: claims,
                 expires: DateTime.UtcNow.AddMinutes(expiresIn),
                 signingCredentials: signingCredentials
             );
@@ -56,7 +56,7 @@ namespace SurveyBasketV5.Authentication
                     ClockSkew = TimeSpan.Zero
                 }, out SecurityToken validatedToken);
 
-                var jwtSecurityToken = (JwtSecurityToken) validatedToken;
+                var jwtSecurityToken = (JwtSecurityToken)validatedToken;
 
                 return jwtSecurityToken.Claims.First(x => x.Type == JwtRegisteredClaimNames.Sub).Value;
             }

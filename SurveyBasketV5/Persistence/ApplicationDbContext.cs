@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 namespace SurveyBasketV5.Persistence
 {
     public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options,
-        IHttpContextAccessor httpContextAccessor) 
+        IHttpContextAccessor httpContextAccessor)
         : IdentityDbContext<ApplicationUser, ApplicationRole, string>(options)
     {
         private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
@@ -24,7 +24,7 @@ namespace SurveyBasketV5.Persistence
                 .SelectMany(t => t.GetForeignKeys())
                 .Where(fk => fk.DeleteBehavior == DeleteBehavior.Cascade && !fk.IsOwnership);
 
-            foreach ( var fk in cascadeFks )
+            foreach (var fk in cascadeFks)
                 fk.DeleteBehavior = DeleteBehavior.Restrict;
 
 

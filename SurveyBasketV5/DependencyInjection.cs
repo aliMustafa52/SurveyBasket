@@ -9,9 +9,6 @@ using SurveyBasketV5.Authentication;
 using SurveyBasketV5.Services.Authentication;
 using SurveyBasketV5.Services.Emails;
 using SurveyBasketV5.Services.Notifications;
-using SurveyBasketV5.Services.Polls;
-using SurveyBasketV5.Services.Questions;
-using SurveyBasketV5.Services.Results;
 using SurveyBasketV5.Services.Roles;
 using SurveyBasketV5.Services.Users;
 using SurveyBasketV5.Services.Votes;
@@ -52,7 +49,11 @@ namespace SurveyBasketV5
 
             services.AddHttpContextAccessor();
 
-            services.Configure<EmailSettings>(configuration.GetSection(nameof(EmailSettings)));
+            //services.Configure<EmailSettings>(configuration.GetSection(nameof(EmailSettings)));
+            services.AddOptions<EmailSettings>()
+                .BindConfiguration(nameof(EmailSettings))
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
 
             return services;
         }

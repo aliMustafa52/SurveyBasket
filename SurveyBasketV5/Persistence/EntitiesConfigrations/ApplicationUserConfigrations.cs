@@ -19,17 +19,17 @@
             //Default Data
             var adminUser = new ApplicationUser
             {
-                Id = DefaultUsers.AdminId,
-                Email = DefaultUsers.AdminEmail,
-                NormalizedEmail = DefaultUsers.AdminEmail.ToUpper(),
-                UserName = DefaultUsers.AdminEmail,
-                NormalizedUserName = DefaultUsers.AdminEmail.ToUpper(),
-                FirstName = DefaultUsers.FirstName,
-                LastName = DefaultUsers.LastName,
-                ConcurrencyStamp = DefaultUsers.AdminConcurrencyStamp,
-                SecurityStamp = DefaultUsers.AdminSecurityStamp,
+                Id = DefaultUsers.Admin.Id,
+                Email = DefaultUsers.Admin.Email,
+                NormalizedEmail = DefaultUsers.Admin.Email.ToUpper(),
+                UserName = DefaultUsers.Admin.Email,
+                NormalizedUserName = DefaultUsers.Admin.Email.ToUpper(),
+                FirstName = DefaultUsers.Admin.FirstName,
+                LastName = DefaultUsers.Admin.LastName,
+                ConcurrencyStamp = DefaultUsers.Admin.ConcurrencyStamp,
+                SecurityStamp = DefaultUsers.Admin.SecurityStamp,
                 EmailConfirmed = true,
-                PasswordHash = DefaultUsers.AdminPasswordHash
+                PasswordHash = DefaultUsers.Admin.PasswordHash
             };
 
             builder.HasData(adminUser);

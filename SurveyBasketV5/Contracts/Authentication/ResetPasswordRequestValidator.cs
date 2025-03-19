@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using SurveyBasketV5.Abstractions.Consts;
 
 namespace SurveyBasketV5.Contracts.Authentication
 {

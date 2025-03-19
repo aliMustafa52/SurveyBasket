@@ -1,6 +1,4 @@
-﻿using Mapster;
-using Microsoft.EntityFrameworkCore;
-using SurveyBasketV5.Contracts.Votes;
+﻿using SurveyBasketV5.Contracts.Votes;
 
 namespace SurveyBasketV5.Services.Votes
 {
@@ -32,8 +30,8 @@ namespace SurveyBasketV5.Services.Votes
                                 .Select(x => x.Id)
                                 .ToListAsync(cancellationToken);
 
-                if(!request.VoteAnswers.All(x => questionIds.Contains(x.QuestionId)))
-                    return Result.Failure(VoteErrors.InvalidQuestions);
+            if (!request.VoteAnswers.All(x => questionIds.Contains(x.QuestionId)))
+                return Result.Failure(VoteErrors.InvalidQuestions);
 
             var vote = new Vote
             {

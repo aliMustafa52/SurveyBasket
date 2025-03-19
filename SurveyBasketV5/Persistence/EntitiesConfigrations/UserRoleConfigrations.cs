@@ -7,8 +7,8 @@
             //Default Data
             var adminUserRole = new IdentityUserRole<string>
             {
-                UserId = DefaultUsers.AdminId,
-                RoleId = DefaultRoles.AdminRoleId
+                UserId = DefaultUsers.Admin.Id,
+                RoleId = DefaultRoles.Admin.Id
             };
 
             builder.HasData(adminUserRole);

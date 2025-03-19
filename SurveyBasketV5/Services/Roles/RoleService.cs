@@ -1,17 +1,16 @@
-﻿using SurveyBasketV5.Abstractions.Consts;
-using SurveyBasketV5.Contracts.Roles;
+﻿using SurveyBasketV5.Contracts.Roles;
 
 namespace SurveyBasketV5.Services.Roles
 {
-    public class RoleService(RoleManager<ApplicationRole> roleManager,ApplicationDbContext dbContext) : IRoleService
+    public class RoleService(RoleManager<ApplicationRole> roleManager, ApplicationDbContext dbContext) : IRoleService
     {
         private readonly RoleManager<ApplicationRole> _roleManager = roleManager;
         private readonly ApplicationDbContext _dbContext = dbContext;
 
-        public async Task<IEnumerable<RoleResponse>> GetAllAsync(bool? includeDisabled = false, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<RoleResponse>> GetAllAsync(bool includeDisabled = false, CancellationToken cancellationToken = default)
         {
-            var roleResponses = await  _roleManager.Roles
-                    .Where(x => !x.IsDefault && (!x.IsDeleted || (includeDisabled.HasValue && includeDisabled.Value)))
+            var roleResponses = await _roleManager.Roles
+                    .Where(x => !x.IsDefault && (!x.IsDeleted || includeDisabled))
                     .AsNoTracking()
                     .ProjectToType<RoleResponse>()
                     .ToListAsync(cancellationToken);
@@ -21,11 +20,11 @@ namespace SurveyBasketV5.Services.Roles
 
         public async Task<Result<RoleDetailResponse>> GetAsync(string roleId)
         {
-            if(await _roleManager.FindByIdAsync(roleId) is not { } role)
+            if (await _roleManager.FindByIdAsync(roleId) is not { } role)
                 return Result.Failure<RoleDetailResponse>(RoleErrors.RoleNotFound);
 
             var permissions = await _roleManager.GetClaimsAsync(role);
-            var response = new RoleDetailResponse(role.Id, role.Name,role.IsDeleted, permissions.Select(x => x.Value));
+            var response = new RoleDetailResponse(role.Id, role.Name, role.IsDeleted, permissions.Select(x => x.Value));
 
             return Result.Success(response);
 
@@ -79,7 +78,7 @@ namespace SurveyBasketV5.Services.Roles
 
         public async Task<Result> UpdateAsync(string id, RoleRequest request)
         {
-            if(await _roleManager.FindByIdAsync(id) is not { } role)
+            if (await _roleManager.FindByIdAsync(id) is not { } role)
                 return Result.Failure<RoleDetailResponse>(RoleErrors.RoleNotFound);
 
             var roleNameIsDuplicated = await _roleManager.Roles
@@ -116,12 +115,12 @@ namespace SurveyBasketV5.Services.Roles
                     ClaimType = Permissions.Type,
                     RoleId = role.Id
                 });
-            
+
             var removedPermissions = currentPermissions
                     .Except(request.Permissions);
 
             await _dbContext.RoleClaims
-                .Where(x => x.RoleId == id 
+                .Where(x => x.RoleId == id
                     && removedPermissions.Contains(x.ClaimValue))
                 .ExecuteDeleteAsync();
 

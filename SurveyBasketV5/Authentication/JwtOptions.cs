@@ -15,7 +15,7 @@ namespace SurveyBasketV5.Authentication
         [Required]
         public string Audience { get; init; } = string.Empty;
 
-        [Range(1,180)]
+        [Range(1, 180)]
         public int ExpiryMinutes { get; init; }
     }
 }

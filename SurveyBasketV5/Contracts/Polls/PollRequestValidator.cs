@@ -1,6 +1,4 @@
-﻿using Azure.Core;
-using FluentValidation;
-using System.Security.Cryptography;
+﻿using FluentValidation;
 
 namespace SurveyBasketV5.Contracts.Polls
 {

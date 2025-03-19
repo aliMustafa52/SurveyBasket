@@ -4,7 +4,7 @@
     {
         public void Configure(EntityTypeBuilder<Answer> builder)
         {
-            builder.HasIndex(x => new {x.Content, x.QuestionId})
+            builder.HasIndex(x => new { x.Content, x.QuestionId })
                 .HasFilter("IsActive = 1")
                 .IsUnique();
 

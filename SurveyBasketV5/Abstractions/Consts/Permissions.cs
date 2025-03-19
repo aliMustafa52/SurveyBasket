@@ -26,7 +26,7 @@
 
         public const string GetResults = "results:read";
 
-        public static IList<string?> GetAllPermissions () =>
+        public static IList<string?> GetAllPermissions() =>
             typeof(Permissions).GetFields().Select(x => x.GetValue(x) as string).ToList();
     }
 }

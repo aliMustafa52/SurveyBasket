@@ -1,6 +1,4 @@
-﻿using Mapster;
-using SurveyBasketV5.Contracts.Answers;
-using SurveyBasketV5.Contracts.Questions;
+﻿using SurveyBasketV5.Contracts.Answers;
 
 namespace SurveyBasketV5.Services.Questions
 {
@@ -22,7 +20,7 @@ namespace SurveyBasketV5.Services.Questions
                         q.Content,
                         q.Answers
                             .Where(x => x.IsActive)
-                            .Select(a=>new AnswerResponse(a.Id, a.Content))
+                            .Select(a => new AnswerResponse(a.Id, a.Content))
                     ))
                     .AsNoTracking()
                     .ToListAsync(cancellationToken);
@@ -39,7 +37,7 @@ namespace SurveyBasketV5.Services.Questions
                 return Result.Failure<IEnumerable<QuestionResponse>>(VoteErrors.DuplicatedVote);
 
             var isPollExists = await _dbContext.Polls
-                    .AnyAsync(x => x.Id == pollId 
+                    .AnyAsync(x => x.Id == pollId
                             && x.IsActive
                             && x.IsPublished
                             && DateOnly.FromDateTime(DateTime.UtcNow) >= x.StartsAt
@@ -64,7 +62,7 @@ namespace SurveyBasketV5.Services.Questions
             return Result.Success<IEnumerable<QuestionResponse>>(questionResponses);
         }
 
-        public async Task<Result<QuestionResponse>> GetAsync(int pollId,int id, CancellationToken cancellationToken)
+        public async Task<Result<QuestionResponse>> GetAsync(int pollId, int id, CancellationToken cancellationToken)
         {
             var isPollExists = await _dbContext.Polls
                                 .AnyAsync(x => x.Id == pollId && x.IsActive, cancellationToken);
@@ -91,7 +89,7 @@ namespace SurveyBasketV5.Services.Questions
         {
             var isPollExists = await _dbContext.Polls
                                 .AnyAsync(x => x.Id == pollId && x.IsActive, cancellationToken);
-            if(!isPollExists)
+            if (!isPollExists)
                 return Result.Failure<QuestionResponse>(PollErrors.PollNotFound);
 
             var isQuestionExists = await _dbContext.Questions
@@ -103,7 +101,7 @@ namespace SurveyBasketV5.Services.Questions
             var question = request.Adapt<Question>();
             question.PollId = pollId;
 
-            await _dbContext.Questions.AddAsync(question,cancellationToken);
+            await _dbContext.Questions.AddAsync(question, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             return Result.Success(question.Adapt<QuestionResponse>());
@@ -123,9 +121,9 @@ namespace SurveyBasketV5.Services.Questions
                 return Result.Failure(QuestionErrors.QuestionNotFound);
 
             var isQuestionContentExists = await _dbContext.Questions
-                .AnyAsync(x => x.IsActive 
-                        && x.Content == request.Content 
-                        && x.PollId == pollId 
+                .AnyAsync(x => x.IsActive
+                        && x.Content == request.Content
+                        && x.PollId == pollId
                         && x.Id != id
                         , cancellationToken
                 );

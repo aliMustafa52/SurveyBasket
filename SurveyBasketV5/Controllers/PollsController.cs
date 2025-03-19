@@ -15,7 +15,7 @@
         }
 
         [HttpGet("current")]
-        [Authorize(Roles = DefaultRoles.MemberRoleName)]
+        [Authorize(Roles = DefaultRoles.Member.Name)]
         public async Task<IActionResult> GetCurrent(CancellationToken cancellationToken)
         {
             var pollResponses = await _pollService.GetCurrentAsync(cancellationToken);
@@ -28,8 +28,8 @@
         {
             var result = await _pollService.GetAsync(id, cancellationToken);
 
-            return result.IsSuccess 
-                ? Ok(result.Value) 
+            return result.IsSuccess
+                ? Ok(result.Value)
                 : result.ToProblem();
         }
 
@@ -40,7 +40,7 @@
             var result = await _pollService.AddAsync(request, cancellationToken);
 
             return result.IsSuccess
-                ? CreatedAtAction(nameof(Get),new {id=result.Value.Id},result.Value)
+                ? CreatedAtAction(nameof(Get), new { id = result.Value.Id }, result.Value)
                 : result.ToProblem();
         }
 
@@ -48,7 +48,7 @@
         [HasPermission(Permissions.UpdatePolls)]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] PollRequest request, CancellationToken cancellationToken)
         {
-            var result = await _pollService.UpdateAsync(id,request, cancellationToken);
+            var result = await _pollService.UpdateAsync(id, request, cancellationToken);
 
             return result.IsSuccess
                 ? NoContent()

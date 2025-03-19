@@ -1,5 +1,4 @@
-﻿using SurveyBasketV5.Contracts.Questions;
-using SurveyBasketV5.Contracts.Users;
+﻿using SurveyBasketV5.Contracts.Users;
 
 namespace SurveyBasketV5.Mapping
 {
@@ -11,7 +10,7 @@ namespace SurveyBasketV5.Mapping
             //    .Ignore(x => x.Answers);
 
             config.NewConfig<QuestionRequest, Question>()
-                .Map(dest => dest.Answers, 
+                .Map(dest => dest.Answers,
                         src => src.Answers.Select(answer => new Answer { Content = answer }));
 
             config.NewConfig<RegisterRequest, ApplicationUser>()

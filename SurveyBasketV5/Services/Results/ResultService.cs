@@ -35,13 +35,13 @@ namespace SurveyBasketV5.Services.Results
         {
             var isPollExists = await _dbContext.Polls
                                 .AnyAsync(p => p.Id == pollId && p.IsActive, cancellationToken);
-            if(!isPollExists)
+            if (!isPollExists)
                 return Result.Failure<IEnumerable<VotesPerDayResponse>>(PollErrors.PollNotFound);
 
             var votesPerDay = await _dbContext.Votes
                                 .Where(v => v.PollId == pollId)
-                                .GroupBy(v => new {Date = DateOnly.FromDateTime(v.SubmittedOn) })
-                                .Select(g => new VotesPerDayResponse(g.Key.Date,g.Count()))
+                                .GroupBy(v => new { Date = DateOnly.FromDateTime(v.SubmittedOn) })
+                                .Select(g => new VotesPerDayResponse(g.Key.Date, g.Count()))
                                 .ToListAsync(cancellationToken);
 
             return Result.Success<IEnumerable<VotesPerDayResponse>>(votesPerDay);

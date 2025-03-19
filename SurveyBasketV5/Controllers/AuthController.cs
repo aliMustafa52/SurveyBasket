@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using SurveyBasketV5.Services.Authentication;
+﻿using SurveyBasketV5.Services.Authentication;
 
 namespace SurveyBasketV5.Controllers
 {
@@ -15,7 +13,7 @@ namespace SurveyBasketV5.Controllers
         {
             var result = await _authService.GetTokenAsync(request.Email, request.Password, cancellationToken);
             return result.IsSuccess
-                ? Ok(result.Value) 
+                ? Ok(result.Value)
                 : result.ToProblem();
         }
         [HttpPost("register")]

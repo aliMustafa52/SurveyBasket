@@ -8,7 +8,7 @@ namespace SurveyBasketV5.Contracts.Questions
         {
             RuleFor(x => x.Content)
                 .NotEmpty()
-                .Length(3,1000);
+                .Length(3, 1000);
 
             RuleFor(x => x.Answers)
                 .Must(x => x.Count > 1)

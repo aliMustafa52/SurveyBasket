@@ -1,6 +1,4 @@
-﻿using SurveyBasketV5.Abstractions;
-
-namespace SurveyBasketV5.Errors
+﻿namespace SurveyBasketV5.Errors
 {
     public static class UserErrors
     {
@@ -14,7 +12,7 @@ namespace SurveyBasketV5.Errors
             new("User.DisabledUser", "DisabledUser, Pleases contact your admin", StatusCodes.Status401Unauthorized);
 
         public static readonly Error LockedOutUser =
-            new ("User.LockedOutUser", "LockedOutUser, Pleases try again after 5 mins", StatusCodes.Status401Unauthorized);
+            new("User.LockedOutUser", "LockedOutUser, Pleases try again after 5 mins", StatusCodes.Status401Unauthorized);
 
         public static readonly Error UserInvalidAccessToken =
             new("User.InvalidAccessToken", "Jwt Access Token is not valid", StatusCodes.Status401Unauthorized);

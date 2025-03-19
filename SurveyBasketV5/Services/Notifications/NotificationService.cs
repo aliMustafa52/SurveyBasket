@@ -5,11 +5,11 @@ namespace SurveyBasketV5.Services.Notifications
 {
     public class NotificationService(ApplicationDbContext dbContext,
         UserManager<ApplicationUser> userManager,
-        HttpContextAccessor httpContextAccessor) : INotificationService
+        IHttpContextAccessor httpContextAccessor) : INotificationService
     {
         private readonly ApplicationDbContext _dbContext = dbContext;
         private readonly UserManager<ApplicationUser> _userManager = userManager;
-        private readonly HttpContextAccessor _httpContextAccessor = httpContextAccessor;
+        private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
 
         public async Task SendNewPollsNotification(int? pollId = null)
         {
@@ -31,9 +31,9 @@ namespace SurveyBasketV5.Services.Notifications
                         .AsNoTracking()
                         .ToListAsync();
             }
-            
+
             //TODO: Select members only
-            var users = await _userManager.GetUsersInRoleAsync(DefaultRoles.MemberRoleName);
+            var users = await _userManager.GetUsersInRoleAsync(DefaultRoles.Member.Name);
 
             var origin = _httpContextAccessor.HttpContext?.Request.Headers.Origin;
             foreach (var poll in polls)
@@ -49,7 +49,7 @@ namespace SurveyBasketV5.Services.Notifications
                     };
                     var emailBody = EmailBodyBuilder.GenerateEmailBody("PollNotification", placeHolders);
 
-                }   
+                }
             }
         }
     }

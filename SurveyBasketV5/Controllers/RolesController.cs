@@ -44,7 +44,7 @@ namespace SurveyBasketV5.Controllers
         [HasPermission(Permissions.UpdateRoles)]
         public async Task<IActionResult> Update(string id, RoleRequest request)
         {
-            var result = await _roleService.UpdateAsync(id,request);
+            var result = await _roleService.UpdateAsync(id, request);
 
             return result.IsSuccess
                 ? NoContent()

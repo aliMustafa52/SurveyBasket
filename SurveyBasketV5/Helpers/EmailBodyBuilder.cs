@@ -10,7 +10,7 @@
             var body = streamReader.ReadToEnd();
             streamReader.Close();
 
-            foreach ( var item in templateModel )
+            foreach (var item in templateModel)
             {
                 body = body.Replace(item.Key, item.Value);
             }

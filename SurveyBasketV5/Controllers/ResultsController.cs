@@ -10,11 +10,11 @@
         [HasPermission(Permissions.GetResults)]
         public async Task<IActionResult> GetAllVotesForPoll([FromRoute] int pollId, CancellationToken cancellationToken)
         {
-            var result =await _resultService.GetAllVotesForPollAsync(pollId, cancellationToken);
+            var result = await _resultService.GetAllVotesForPollAsync(pollId, cancellationToken);
 
             return result.IsSuccess
                 ? Ok(result.Value)
-                : result.ToProblem(); 
+                : result.ToProblem();
         }
 
         [HttpGet("votes-per-day")]

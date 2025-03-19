@@ -14,21 +14,21 @@ namespace SurveyBasketV5.Services.Users
         public async Task<IEnumerable<UserResponse>> GetAllAsync(CancellationToken cancellationToken = default)
         {
             return await (from u in _dbContext.Users
-                         join ur in _dbContext.UserRoles
-                         on u.Id equals ur.UserId
-                         join r in _dbContext.Roles
-                         on ur.RoleId equals r.Id into roles
-                         where !roles.Any(r => r.Name == DefaultRoles.MemberRoleName) 
-                         select new
-                         {
-                             u.Id,
-                             u.FirstName,
-                             u.LastName,
-                             u.Email,
-                             u.IsDisabled,
-                             Roles = roles.Select(x => x.Name!)
-                         })
-                         .GroupBy(u => new {u.Id,u.FirstName,u.LastName,u.Email,u.IsDisabled})
+                          join ur in _dbContext.UserRoles
+                          on u.Id equals ur.UserId
+                          join r in _dbContext.Roles
+                          on ur.RoleId equals r.Id into roles
+                          where !roles.Any(r => r.Name == DefaultRoles.Member.Name)
+                          select new
+                          {
+                              u.Id,
+                              u.FirstName,
+                              u.LastName,
+                              u.Email,
+                              u.IsDisabled,
+                              Roles = roles.Select(x => x.Name!)
+                          })
+                         .GroupBy(u => new { u.Id, u.FirstName, u.LastName, u.Email, u.IsDisabled })
                          .Select(u => new UserResponse(
                             u.Key.Id,
                             u.Key.FirstName,
@@ -50,7 +50,7 @@ namespace SurveyBasketV5.Services.Users
             var roles = await _userManager.GetRolesAsync(user);
 
             //mapping from two sources but you need to configure it in mapping configuration
-            var response = (user,roles).Adapt<UserResponse>();
+            var response = (user, roles).Adapt<UserResponse>();
 
             return Result.Success(response);
         }
@@ -59,28 +59,28 @@ namespace SurveyBasketV5.Services.Users
         {
             var isEmailExists = await _userManager.Users
                         .AnyAsync(x => x.Email == request.Email, cancellationToken);
-            if(isEmailExists)
+            if (isEmailExists)
                 return Result.Failure<UserResponse>(UserErrors.UserDublicatedEmail);
 
             //check roles
-            var allowedRoles = await _roleService.GetAllAsync(false,cancellationToken);
+            var allowedRoles = await _roleService.GetAllAsync(false, cancellationToken);
 
-            if(request.Roles.Except(allowedRoles.Select(x => x.Name)).Any())
+            if (request.Roles.Except(allowedRoles.Select(x => x.Name)).Any())
                 return Result.Failure<UserResponse>(UserErrors.InvalidRoles);
 
             var user = request.Adapt<ApplicationUser>();
-            var result = await _userManager.CreateAsync(user,request.Password);
-            if(!result.Succeeded)
+            var result = await _userManager.CreateAsync(user, request.Password);
+            if (!result.Succeeded)
             {
                 var error = result.Errors.First();
                 return Result.Failure<UserResponse>(new Error(
-                    error.Code, error.Description, StatusCodes.Status400BadRequest    
+                    error.Code, error.Description, StatusCodes.Status400BadRequest
                 ));
             }
 
             await _userManager.AddToRolesAsync(user, request.Roles);
 
-            var response = (user,request.Roles).Adapt<UserResponse>();
+            var response = (user, request.Roles).Adapt<UserResponse>();
             return Result.Success(response);
         }
 
@@ -142,7 +142,7 @@ namespace SurveyBasketV5.Services.Users
             if (await _userManager.FindByIdAsync(id) is not { } user)
                 return Result.Failure(UserErrors.UserNotFound);
 
-            var result = await _userManager.SetLockoutEndDateAsync(user,null);
+            var result = await _userManager.SetLockoutEndDateAsync(user, null);
             if (!result.Succeeded)
             {
                 var error = result.Errors.First();
@@ -220,10 +220,10 @@ namespace SurveyBasketV5.Services.Users
 
             var rowsAffected = await _userManager.Users
                     .Where(x => x.Id == userId)
-                    .ExecuteUpdateAsync(setters => 
+                    .ExecuteUpdateAsync(setters =>
                         setters
-                            .SetProperty(u => u.FirstName,request.FirstName)
-                            .SetProperty(u => u.LastName,request.LastName)
+                            .SetProperty(u => u.FirstName, request.FirstName)
+                            .SetProperty(u => u.LastName, request.LastName)
                     );
 
             if (rowsAffected == 0)
@@ -244,8 +244,8 @@ namespace SurveyBasketV5.Services.Users
             {
                 var error = result.Errors.First();
                 return Result.Failure(new Error(error.Code
-                        ,error.Description
-                        ,StatusCodes.Status400BadRequest)
+                        , error.Description
+                        , StatusCodes.Status400BadRequest)
                 );
             }
 
