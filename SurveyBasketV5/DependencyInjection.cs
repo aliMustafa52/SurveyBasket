@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.IdentityModel.Tokens;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 using SurveyBasketV5.Authentication;
+using SurveyBasketV5.Health;
 using SurveyBasketV5.Services.Authentication;
 using SurveyBasketV5.Services.Emails;
 using SurveyBasketV5.Services.Notifications;
@@ -54,6 +55,13 @@ namespace SurveyBasketV5
                 .BindConfiguration(nameof(EmailSettings))
                 .ValidateDataAnnotations()
                 .ValidateOnStart();
+
+            services.AddHealthChecks()
+                .AddDbContextCheck<ApplicationDbContext>(name: "database")
+                .AddHangfire(options => {
+                    options.MinimumAvailableServers = 1;
+                })
+                .AddCheck<MailProviderHealthCheck>(name:"mail service");
 
             return services;
         }
